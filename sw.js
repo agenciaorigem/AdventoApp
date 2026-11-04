@@ -1,4 +1,4 @@
-const cacheName = 'advento-v3';
+const cacheName = 'advento-github-v4';
 const scopedCache = self.registration.scope + cacheName;
 
 self.addEventListener('install', event => {

@@ -1,4 +1,4 @@
-const endpoint = ''; // URL HTTPS do Worker, sem barra final.
+const endpoint = 'https://advento-tour-excursao-2026.origem-ag.chatgpt.site/api';
 const entry = document.querySelector('#admin-entry');
 const gate = document.querySelector('#admin-gate');
 const pin = gate.querySelector('input');
@@ -26,7 +26,7 @@ let revision = 0;
 let current = defaults;
 let draft;
 let password;
-let pendingImages = 0;
+
 
 async function request(path, options={}) {
  if (!endpoint) throw new Error('Painel ainda sem conexão com o servidor.');
@@ -67,54 +67,6 @@ entry.onclick = () => {
 function addFields(container, values, make) {
  container.replaceChildren(...values.map(make));
 }
-async function convertPhoto(file) {
- const url = URL.createObjectURL(file);
- try {
-  const image = new Image();
-  image.src=url;
-  await image.decode();
-  const scale=Math.min(1,700/Math.max(image.width,image.height));
-  const canvas=document.createElement('canvas');
-  canvas.width=Math.round(image.width*scale);
-  canvas.height=Math.round(image.height*scale);
-  canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
-  return canvas.toDataURL('image/jpeg',0.72);
- } finally { URL.revokeObjectURL(url); }
-}
-async function setPhoto(input, update) {
- const file=input.files[0];
- if (!file) return;
- const activeDraft=draft;
- pendingImages++;
- save.disabled=true;
- try {
-  const src=await convertPhoto(file);
-  if (panel.open && draft===activeDraft) update(src);
- } catch { saveStatus.textContent='Não foi possível abrir essa imagem.'; }
- finally { pendingImages--; save.disabled=pendingImages>0; input.value=''; }
-}
-function imageFields(){
- addFields(document.querySelector('#edit-images'),[...images,...draft.extra],(image,index)=>{
-  const extra=index>=images.length;
-  const label=document.createElement('label');
-  const preview=document.createElement('img');
-  preview.src=extra?image:(draft.images[index] || image.src);
-  preview.alt=extra?'Foto adicional da van':image.alt;
-  const input=Object.assign(document.createElement('input'),{type:'file',accept:'image/*'});
-  label.append(preview,' '+preview.alt,input);
-  input.onchange=()=>setPhoto(input,src=>{
-   if(extra) draft.extra[index-images.length]=src;
-   else draft.images[index]=src;
-   preview.src=src;
-  });
-  return label;
- });
-}
-document.querySelector('#add-photo').onchange=event=>setPhoto(event.target,src=>{
- if(draft.extra.length>=16){saveStatus.textContent='Limite de 16 fotos adicionais.';return;}
- draft.extra.push(src);
- imageFields();
-});
 gate.onsubmit=async event=>{
  event.preventDefault();
  if (pin.disabled) return;
@@ -139,7 +91,7 @@ gate.onsubmit=async event=>{
    field.oninput=()=>{draft.texts[index]=field.value;};
    return label;
   });
-  imageFields();
+
   gate.hidden=true;
   entry.setAttribute('aria-expanded','false');
   saveStatus.textContent='';
@@ -160,5 +112,5 @@ save.onclick=async ()=>{
   apply(current);
   saveStatus.textContent='Alterações salvas.';
  } catch(error){saveStatus.textContent=error.message;}
- finally {save.disabled=pendingImages>0;}
+ finally {save.disabled=false;}
 };

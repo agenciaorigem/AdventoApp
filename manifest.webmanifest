@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Advento Tour | Excursão 2026",
   "short_name": "Advento",
-  "start_url": "./",
+  "start_url": "./aplicativo.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#080809",

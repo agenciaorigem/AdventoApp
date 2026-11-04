@@ -1,9 +1,9 @@
-const cacheName = 'advento-v1';
+const cacheName = 'advento-v2';
 const scopedCache = self.registration.scope + cacheName;
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(scopedCache).then(cache =>
-    cache.addAll(['./', './capa-vertical.png', './manifest.webmanifest', './icone-192.png', './icone-512.png'])
+    cache.addAll(['./', './aplicativo.html', './capa-vertical.png', './manifest.webmanifest', './icone-192.png', './icone-512.png'])
   ));
 });
 
@@ -16,6 +16,6 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate' && event.request.url.startsWith(self.registration.scope)) {
-    event.respondWith(fetch(event.request).catch(() => caches.open(scopedCache).then(cache => cache.match('./'))));
+    event.respondWith(fetch(event.request).catch(() => caches.open(scopedCache).then(cache => cache.match(event.request, {ignoreSearch:true}))));
   }
 });

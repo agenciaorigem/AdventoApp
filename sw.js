@@ -1,9 +1,9 @@
-const cacheName = 'advento-v2';
+const cacheName = 'advento-v3';
 const scopedCache = self.registration.scope + cacheName;
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(scopedCache).then(cache =>
-    cache.addAll(['./', './aplicativo.html', './capa-vertical.png', './manifest.webmanifest', './icone-192.png', './icone-512.png'])
+    cache.addAll(['./', './aplicativo.html', './painel.js', './capa-vertical.png', './manifest.webmanifest', './icone-192.png', './icone-512.png'])
   ));
 });
 
